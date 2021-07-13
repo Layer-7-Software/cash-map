@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { BudgetService } from './budget.service';
 import { Budget } from "./models/Budget";
+import { Expense } from './models/Expense';
+import { ExpenseInterval } from './models/ExpenseInterval';
 
 @Component({
   selector: 'app-root',
@@ -13,12 +15,24 @@ export class AppComponent {
   constructor(private budgetService: BudgetService) {
     this.budget = new Budget();
   }
-  
-  addExpense() {
-    this.budgetService.newExpense(this.budget);
+
+  nonRecurringExpenses(): Expense[] {
+    return this.budgetService.getExpenses(this.budget, ExpenseInterval.OneTime);
   }
 
-  removeExpense(id: string) {
+  monthlyExpenses(): Expense[] {
+    return this.budgetService.getExpenses(this.budget, ExpenseInterval.Monthly);
+  }
+  
+  addNonRecurringExpense(): void {
+    this.budgetService.newExpense(this.budget, ExpenseInterval.OneTime);
+  }
+
+  addMonthlyExpense(): void {
+    this.budgetService.newExpense(this.budget, ExpenseInterval.Monthly);
+  }
+
+  removeExpense(id: string): void {
     this.budgetService.removeExpense(this.budget, id);
   }
 

@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { BudgetService } from './budget.service';
 import { IdService } from './id.service';
 import { Budget } from './models/Budget';
+import { ExpenseInterval } from './models/ExpenseInterval';
 
 describe('AppComponent', () => {
   let budgetService: BudgetService;
@@ -39,12 +40,56 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('.title').textContent).toContain('Cash Map');
   });
 
-  describe('when adding an expense', () => {
+  describe('when getting monthly expenses', () => {
     let component: AppComponent;
     let budget: Budget;
 
     function act() {
-      component.addExpense();
+      component.monthlyExpenses();
+    }
+
+    beforeEach(() => {
+      budget = new Budget();
+      const fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      component.budget = budget;
+    });
+
+    it('gets the expenses via the budget service', () => {
+      spyOn(budgetService, 'getExpenses').and.callFake(() => { return []; });
+      act();
+      expect(budgetService.getExpenses).toHaveBeenCalledWith(budget, ExpenseInterval.Monthly);
+    });
+  });
+
+  describe('when getting non-recurring expenses', () => {
+    let component: AppComponent;
+    let budget: Budget;
+
+    function act() {
+      component.nonRecurringExpenses();
+    }
+
+    beforeEach(() => {
+      budget = new Budget();
+      const fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      component.budget = budget;
+    });
+
+    it('gets the expenses via the budget service', () => {
+      spyOn(budgetService, 'getExpenses').and.callFake(() => { return []; });
+      act();
+      expect(budgetService.getExpenses).toHaveBeenCalledWith(budget, ExpenseInterval.OneTime);
+    });
+  });
+
+  describe('when adding a non-recurring expense', () => {
+    let component: AppComponent;
+    let budget: Budget;
+
+    function act() {
+      component.addNonRecurringExpense();
     }
 
     beforeEach(() => {
@@ -55,9 +100,31 @@ describe('AppComponent', () => {
     });
 
     it('adds the expense via the budget service', () => {
-      spyOn(budgetService, 'newExpense').and.callFake(() => {});
+      spyOn(budgetService, 'newExpense').and.callFake(() => { });
       act();
-      expect(budgetService.newExpense).toHaveBeenCalledWith(budget);
+      expect(budgetService.newExpense).toHaveBeenCalledWith(budget, ExpenseInterval.OneTime);
+    });
+  });
+
+  describe('when adding a monthly expense', () => {
+    let component: AppComponent;
+    let budget: Budget;
+
+    function act() {
+      component.addMonthlyExpense();
+    }
+
+    beforeEach(() => {
+      budget = new Budget();
+      const fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      component.budget = budget;
+    });
+
+    it('adds the expense via the budget service', () => {
+      spyOn(budgetService, 'newExpense').and.callFake(() => { });
+      act();
+      expect(budgetService.newExpense).toHaveBeenCalledWith(budget, ExpenseInterval.Monthly);
     });
   });
 
@@ -79,7 +146,7 @@ describe('AppComponent', () => {
     }
 
     it('removes the expense via the budget service', () => {
-      spyOn(budgetService, 'removeExpense').and.callFake(() => {});
+      spyOn(budgetService, 'removeExpense').and.callFake(() => { });
       act();
       expect(budgetService.removeExpense).toHaveBeenCalledWith(budget, id);
     });
