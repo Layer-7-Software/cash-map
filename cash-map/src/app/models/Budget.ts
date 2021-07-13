@@ -8,6 +8,6 @@ export class Budget {
   constructor() {
     this.income = 0;
     this.percentageOfIncomeForTaxes = 0;
-    this.expenses = [];
+    this.expenses = [new Expense()];
   }
 }

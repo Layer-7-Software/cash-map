@@ -33,8 +33,9 @@ describe('BudgetService', () => {
       });
 
       it('adds an expense', () => {
+        const previousLength = budget.expenses.length;
         act();
-        expect(budget.expenses.length).toEqual(1);
+        expect(budget.expenses.length).toEqual(previousLength + 1);
       });
 
       it('assigns an id from the id service', () => {
