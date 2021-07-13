@@ -1,11 +1,55 @@
+.page {
+  height: calc(100% - 2 * 1rem);
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  max-width: 40rem;
+  margin: auto;
+  padding: 1rem 0;
+}
+
+.sections {
+  display: grid;
+  grid-gap: 1rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgb(236, 236, 236);
+  border-radius: 1rem;
+  padding: 1rem;
+
+  .add-button {
+    margin-bottom: 1rem;
+  }
+
+  .fields {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: auto;
+
+    @media screen and (min-width: 40rem) {
+      grid-template-columns: auto auto;
+    }
+  }
+}
+
 .expenses {
   display: grid;
   grid-gap: 1rem;
 
   .expense {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto;
     grid-gap: 1rem;
     max-width: fit-content;
+
+    @media screen and (min-width: 40rem) {
+      grid-template-columns: auto auto auto;
+    }
   }
 }
