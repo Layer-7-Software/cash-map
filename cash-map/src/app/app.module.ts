@@ -6,10 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
+import { ClearCacheDialogComponent } from './clear-cache-dialog/clear-cache-dialog.component';
+import { CacheControlsComponent } from './cache-controls/cache-controls.component';
+import { BudgetComponent } from './budget/budget.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ClearCacheDialogComponent,
+    CacheControlsComponent,
+    BudgetComponent
   ],
   imports: [
     BrowserModule,

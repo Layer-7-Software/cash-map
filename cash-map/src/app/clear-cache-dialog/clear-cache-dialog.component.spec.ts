@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
 
+import { ClearCacheDialogComponent } from './clear-cache-dialog.component';
 
-describe('BudgetComponent', () => {
-  let component: AppComponent;
-  let fixture: ComponentFixture<AppComponent>;
+describe('ClearCacheDialogComponent', () => {
+  let component: ClearCacheDialogComponent;
+  let fixture: ComponentFixture<ClearCacheDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppComponent ]
+      declarations: [ ClearCacheDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AppComponent);
+    fixture = TestBed.createComponent(ClearCacheDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -23,4 +23,3 @@ describe('BudgetComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-
