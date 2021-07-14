@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BudgetService } from './budget.service';
+import { CacheService } from './cache.service';
 import { Budget } from "./models/Budget";
 import { Expense } from './models/Expense';
 import { ExpenseInterval } from './models/ExpenseInterval';
@@ -12,8 +13,11 @@ import { ExpenseInterval } from './models/ExpenseInterval';
 export class AppComponent {
   budget: Budget;
 
-  constructor(private budgetService: BudgetService) {
-    this.budget = new Budget();
+  constructor(
+    private budgetService: BudgetService,
+    private cacheService: CacheService
+  ) {
+    this.budget = this.cacheService.load();
   }
 
   nonRecurringExpenses(): Expense[] {
@@ -23,7 +27,7 @@ export class AppComponent {
   monthlyExpenses(): Expense[] {
     return this.budgetService.getExpenses(this.budget, ExpenseInterval.Monthly);
   }
-  
+
   addNonRecurringExpense(): void {
     this.budgetService.newExpense(this.budget, ExpenseInterval.OneTime);
   }

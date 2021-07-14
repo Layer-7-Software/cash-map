@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { BudgetService } from './budget.service';
 import { IdService } from './id.service';
+import { MaterialModule } from './material.module';
 import { Budget } from './models/Budget';
 import { ExpenseInterval } from './models/ExpenseInterval';
 
@@ -16,13 +18,15 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
+        MaterialModule,
+        BrowserAnimationsModule,
         FormsModule
       ],
       declarations: [
         AppComponent
       ],
       providers: [
-        { provide: BudgetService, useValue: budgetService }
+        { provide: BudgetService, useValue: budgetService },
       ]
     }).compileComponents();
   });
