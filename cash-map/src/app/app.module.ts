@@ -7,11 +7,13 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { ClearCacheDialogComponent } from './clear-cache-dialog/clear-cache-dialog.component';
+import { CacheControlsComponent } from './cache-controls/cache-controls.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClearCacheDialogComponent,
+    CacheControlsComponent
   ],
   imports: [
     BrowserModule,
