@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Budget } from './models/Budget';
+import { IncomeInterval } from './models/IncomeInterval';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CacheService {
+
+  defaults = {
+    incomeInterval: IncomeInterval.Yearly
+  };
 
   constructor() { }
 
@@ -14,7 +19,7 @@ export class CacheService {
 
   load(): Budget {
     const cache = localStorage.getItem('cashmap-budget');
-    return cache ? JSON.parse(cache) : new Budget();
+    return cache ? this.parseCache(cache) : new Budget();
   }
 
   clear(): void {
@@ -26,6 +31,22 @@ export class CacheService {
     const cacheJson = JSON.stringify(cache);
     let blob = new Blob([cacheJson], { type: 'text/json' });
     this.downloadBlob(blob, 'Cash Map.json');
+  }
+
+  private parseCache(cache: string): Budget {
+    let parsed: Budget = JSON.parse(cache);
+    this.setDefaults(parsed);
+    return parsed;
+  }
+
+  private setDefaults(parsed: Budget) {
+    if (!parsed) {
+      return;
+    }
+
+    if (parsed.incomeInterval == undefined || parsed.incomeInterval == IncomeInterval.None) {
+      parsed.incomeInterval = this.defaults.incomeInterval;
+    }
   }
 
   private downloadBlob(blob: Blob, fileName: string): void {

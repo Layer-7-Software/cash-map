@@ -7,9 +7,17 @@
       <h3>Income</h3>
       <div class="fields">
         <mat-form-field appearance="fill">
-          <mat-label>Income (per year)</mat-label>
+          <mat-label>Income</mat-label>
           <span matPrefix>$</span>
           <input matInput type="number" min="0" [(ngModel)]="budget.income" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Interval</mat-label>
+          <mat-select [(value)]="incomeInterval">
+            <mat-option *ngFor="let key of incomeIntervalKeys" [value]="key">
+              {{incomeIntervals[key]}}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Percentage of income paid in taxes</mat-label>
@@ -20,10 +28,10 @@
     </div>
 
     <div class="section">
-      <h3>Expenses (recurring monthly)</h3>
-      <button class="add-button" mat-raised-button color="primary" (click)="addMonthlyExpense()">Add</button>
+      <h3>Expenses</h3>
+      <button class="add-button" mat-raised-button color="primary" (click)="addExpense()">Add</button>
       <div class="expenses">
-        <div class="expense" *ngFor="let expense of monthlyExpenses()">
+        <div class="expense" *ngFor="let expense of expenses()">
           <mat-form-field appearance="fill">
             <mat-label>Label</mat-label>
             <input matInput type="text" placeholder="Label" [(ngModel)]="expense.label" />
@@ -33,26 +41,13 @@
             <span matPrefix>$</span>
             <input matInput type="number" min="0" step="0.01" placeholder="Amount" [(ngModel)]="expense.value" />
           </mat-form-field>
-          <button mat-icon-button color="accent" (click)="removeExpense(expense.id)">
-            <mat-icon aria-hidden="false" aria-label="Delete">delete</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h3>Non-recurring Expenses</h3>
-      <button class="add-button" mat-raised-button color="primary" (click)="addNonRecurringExpense()">Add</button>
-      <div class="expenses">
-        <div class="expense" *ngFor="let expense of nonRecurringExpenses()">
           <mat-form-field appearance="fill">
-            <mat-label>Label</mat-label>
-            <input matInput type="text" placeholder="Label" [(ngModel)]="expense.label" />
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Amount</mat-label>
-            <span matPrefix>$</span>
-            <input matInput type="number" min="0" step="0.01" placeholder="Amount" [(ngModel)]="expense.value" />
+            <mat-label>Interval</mat-label>
+            <mat-select [(value)]="expense.recurrence">
+              <mat-option *ngFor="let key of expenseIntervalKeys" [value]="key">
+                {{expenseIntervals[key]}}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
           <button mat-icon-button color="accent" (click)="removeExpense(expense.id)">
             <mat-icon aria-hidden="false" aria-label="Delete">delete</mat-icon>

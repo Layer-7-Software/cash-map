@@ -3,6 +3,7 @@ import { IdService } from './id.service';
 import { Budget } from './models/Budget';
 import { Expense } from './models/Expense';
 import { ExpenseInterval } from './models/ExpenseInterval';
+import { IncomeInterval } from './models/IncomeInterval';
 
 @Injectable({
   providedIn: 'root'
@@ -11,18 +12,14 @@ export class BudgetService {
 
   constructor(protected idService: IdService) { }
 
-  getExpenses(budget: Budget, recurrence?: ExpenseInterval): Expense[] {
-    if (!recurrence) {
-      return budget.expenses;
-    }
-    return budget.expenses.filter(e => e.recurrence === recurrence);
-  }
-
-  newExpense(budget: Budget, interval: ExpenseInterval): void {
-    budget.expenses.push(new Expense({
+  addExpense(budget: Budget, interval?: ExpenseInterval): void {
+    let expense = new Expense({
       id: this.idService.newId(),
-      recurrence: interval
-    }));
+    });
+    if (interval) {
+      expense.recurrence = interval;
+    }
+    budget.expenses.push(expense);
   }
 
   removeExpense(budget: Budget, id: string): void {
@@ -32,31 +29,39 @@ export class BudgetService {
     }
   }
 
+  incomePerYear(budget: Budget): number {
+    return budget.income * this.numberOfIncomesPerYear(budget.incomeInterval);
+  }
+  
   net(budget: Budget): number {
-    return budget.income - this.taxes(budget) - this.totalExpenses(budget);
+    return this.incomePerYear(budget) - this.taxesPerYear(budget) - this.totalExpensesPerYear(budget);
+  }
+  
+  taxesPerYear(budget: Budget): number {
+    return this.incomePerYear(budget) * budget.percentageOfIncomeForTaxes / 100;
   }
 
-  private taxes(budget: Budget): number {
-    return budget.income * budget.percentageOfIncomeForTaxes / 100;
+  private numberOfIncomesPerYear(interval: IncomeInterval): number {
+    return interval === IncomeInterval.Yearly ? 1 : 0;
   }
 
-  private totalExpenses(budget: Budget): number {
-    return this.totalNonRecurringExpenses(budget) + this.monthlyExpensesForOneYear(budget);
+  private totalExpensesPerYear(budget: Budget): number {
+    return this.totalNonRecurringExpenses(budget) + this.monthlyExpensesPerYear(budget);
   }
 
   private totalNonRecurringExpenses(budget: Budget): number {
+    return this.sumExpenses(budget.expenses.filter(e => e.recurrence === ExpenseInterval.OneTime));
+  }
+
+  private monthlyExpensesPerYear(budget: Budget): number {
+    return this.sumExpenses(budget.expenses.filter(e => e.recurrence === ExpenseInterval.Monthly)) * 12;
+  }
+
+  private sumExpenses(expenses: Expense[]): number {
     let sum = 0;
-    for (let expense of this.getExpenses(budget, ExpenseInterval.OneTime)) {
+    for (let expense of expenses) {
       sum += expense.value;
     }
     return sum;
-  }
-
-  private monthlyExpensesForOneYear(budget: Budget): number {
-    let sum = 0;
-    for (let expense of this.getExpenses(budget, ExpenseInterval.Monthly)) {
-      sum += expense.value;
-    }
-    return sum * 12;
   }
 }

@@ -5,6 +5,7 @@ import { IdService } from './id.service';
 import { Budget } from './models/Budget';
 import { Expense } from './models/Expense';
 import { ExpenseInterval } from './models/ExpenseInterval';
+import { IncomeInterval } from './models/IncomeInterval';
 
 describe('BudgetService', () => {
   let service: BudgetService;
@@ -21,63 +22,12 @@ describe('BudgetService', () => {
     service = TestBed.inject(BudgetService);
   });
 
-  describe('when getting expenses', () => {
-    let budget: Budget;
-    let interval: any;
-
-    function act(): Expense[] {
-      return service.getExpenses(budget, interval);
-    }
-
-    describe('given a defined budget', () => {
-      beforeEach(() => {
-        budget = new Budget();
-      });
-
-      describe('given no interval', () => {
-        beforeEach(() => {
-          interval = undefined;
-        });
-
-        it('returns all expenses', () => {
-          budget.expenses = [
-            new Expense(),
-            new Expense(),
-            new Expense(),
-          ];
-          const actual = act();
-
-          expect(budget.expenses).toEqual(actual);
-        });
-      });
-
-      describe('given an interval', () => {
-        beforeEach(() => {
-          interval = ExpenseInterval.Monthly;
-        });
-
-        it('returns expenses with the given interval', () => {
-          budget.expenses = [
-            new Expense({ recurrence: ExpenseInterval.Monthly }),
-            new Expense({ recurrence: ExpenseInterval.Monthly }),
-            new Expense({ recurrence: ExpenseInterval.OneTime }),
-            new Expense({ recurrence: ExpenseInterval.OneTime }),
-            new Expense({ recurrence: ExpenseInterval.OneTime }),
-          ];
-          const actual = act();
-
-          expect(actual.length).toEqual(2);
-        });
-      });
-    });
-  });
-
   describe('when adding a new expense', () => {
     let budget: Budget;
     let interval: ExpenseInterval;
 
     function act() {
-      service.newExpense(budget, interval);
+      service.addExpense(budget, interval);
     }
 
     describe('given a defined budget', () => {
@@ -170,6 +120,70 @@ describe('BudgetService', () => {
     });
   });
 
+  describe('when calculating the income per year', () => {
+    let budget: Budget;
+
+    function act(): number {
+      return service.incomePerYear(budget);
+    }
+
+    describe('given a defined budget', () => {
+      beforeEach(() => {
+        budget = new Budget();
+      });
+
+      describe('given income', () => {
+        beforeEach(() => {
+          budget.income = 1000;
+        });
+
+        describe('given no interval', () => {
+          beforeEach(() => {
+            budget.incomeInterval = IncomeInterval.None;
+          });
+
+          it('returns 0', () => {
+            const actual = act();
+            expect(actual).toEqual(0);
+          });
+        });
+
+        describe('given a yearly interval', () => {
+          beforeEach(() => {
+            budget.incomeInterval = IncomeInterval.Yearly;
+          });
+
+          it('returns the income', () => {
+            const actual = act();
+            expect(actual).toEqual(1000);
+          });
+        });
+      });
+    });
+  });
+
+  describe('when calculating the taxes per year', () => {
+    let budget: Budget;
+
+    function act(): number {
+      return service.taxesPerYear(budget);
+    }
+
+    describe('given a defined budget', () => {
+      beforeEach(() => {
+        budget = new Budget();
+        budget.income = 1000;
+        budget.incomeInterval = IncomeInterval.Yearly;
+        budget.percentageOfIncomeForTaxes = 20;
+      });
+
+      it('calculates correctly', () => {
+        const actual = act();
+        expect(actual).toEqual(1000 * 0.20);
+      })
+    });
+  });
+
   describe('when finding the net amount', () => {
     let budget: Budget;
 
@@ -187,51 +201,67 @@ describe('BudgetService', () => {
           budget.income = 1000;
         });
 
-        it('returns the income', () => {
-          const actual = act();
-          expect(actual).toEqual(1000);
-        });
-
-        describe('given a percentage of income for taxes', () => {
+        describe('given no interval', () => {
           beforeEach(() => {
-            budget.percentageOfIncomeForTaxes = 10;
+            budget.incomeInterval = IncomeInterval.None;
           });
 
-          it('subtracts taxes from income', () => {
+          it('returns 0', () => {
             const actual = act();
-            expect(actual).toEqual(900);
+            expect(actual).toEqual(0);
           });
         });
 
-        describe('given monthly expenses', () => {
+        describe('given a yearly interval', () => {
           beforeEach(() => {
-            budget.expenses = [
-              new Expense({ value: 10, recurrence: ExpenseInterval.Monthly }),
-              new Expense({ value: 15, recurrence: ExpenseInterval.Monthly })
-            ];
+            budget.incomeInterval = IncomeInterval.Yearly;
           });
 
-          it('subtracts the total monthly expenses for a year from income', () => {
+          it('returns the income', () => {
             const actual = act();
-            expect(actual).toEqual(700);
+            expect(actual).toEqual(1000);
           });
-        });
-
-        describe('given non-recurring expenses', () => {
-          beforeEach(() => {
-            budget.expenses = [
-              new Expense({ value: 10, recurrence: ExpenseInterval.OneTime }),
-              new Expense({ value: 15, recurrence: ExpenseInterval.OneTime })
-            ];
+  
+          describe('given a percentage of income for taxes', () => {
+            beforeEach(() => {
+              budget.percentageOfIncomeForTaxes = 10;
+            });
+  
+            it('subtracts taxes from income', () => {
+              const actual = act();
+              expect(actual).toEqual(900);
+            });
           });
-
-          it('subtracts the total non-recurring expenses from income', () => {
-            const actual = act();
-            expect(actual).toEqual(975);
+  
+          describe('given monthly expenses', () => {
+            beforeEach(() => {
+              budget.expenses = [
+                new Expense({ value: 10, recurrence: ExpenseInterval.Monthly }),
+                new Expense({ value: 15, recurrence: ExpenseInterval.Monthly })
+              ];
+            });
+  
+            it('subtracts the total monthly expenses for a year from income', () => {
+              const actual = act();
+              expect(actual).toEqual(700);
+            });
+          });
+  
+          describe('given non-recurring expenses', () => {
+            beforeEach(() => {
+              budget.expenses = [
+                new Expense({ value: 10, recurrence: ExpenseInterval.OneTime }),
+                new Expense({ value: 15, recurrence: ExpenseInterval.OneTime })
+              ];
+            });
+  
+            it('subtracts the total non-recurring expenses from income', () => {
+              const actual = act();
+              expect(actual).toEqual(975);
+            });
           });
         });
       });
     });
   });
-
 });

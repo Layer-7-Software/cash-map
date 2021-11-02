@@ -4,6 +4,7 @@ import { CacheService } from '../cache.service';
 import { Budget } from '../models/Budget';
 import { Expense } from '../models/Expense';
 import { ExpenseInterval } from '../models/ExpenseInterval';
+import { IncomeInterval } from '../models/IncomeInterval';
 
 @Component({
   selector: 'app-budget',
@@ -12,31 +13,40 @@ import { ExpenseInterval } from '../models/ExpenseInterval';
 })
 export class BudgetComponent implements OnInit {
   budget: Budget;
+  incomeInterval: IncomeInterval;
+
+  incomeIntervals = IncomeInterval;
+  incomeIntervalKeys: number[];
+  expenseIntervals = ExpenseInterval;
+  expenseIntervalKeys: number[];
 
   constructor(
     private budgetService: BudgetService,
     private cacheService: CacheService
   ) {
     this.budget = this.cacheService.load();
+    this.incomeInterval = this.budget.incomeInterval;
+    this.incomeIntervalKeys = Object.keys(this.incomeIntervals).filter(k => !isNaN(Number(k))).map(Number);
+    this.expenseIntervalKeys = Object.keys(this.expenseIntervals).filter(k => !isNaN(Number(k))).map(Number);
   }
 
   ngOnInit(): void {
   }
 
-  nonRecurringExpenses(): Expense[] {
-    return this.budgetService.getExpenses(this.budget, ExpenseInterval.OneTime);
+  expenses(): Expense[] {
+    return this.budget.expenses;
   }
 
-  monthlyExpenses(): Expense[] {
-    return this.budgetService.getExpenses(this.budget, ExpenseInterval.Monthly);
+  addExpense(): void {
+    this.budgetService.addExpense(this.budget);
   }
 
-  addNonRecurringExpense(): void {
-    this.budgetService.newExpense(this.budget, ExpenseInterval.OneTime);
+  removeExpense(id: string): void {
+    this.budgetService.removeExpense(this.budget, id);
   }
 
-  addMonthlyExpense(): void {
-    this.budgetService.newExpense(this.budget, ExpenseInterval.Monthly);
+  net(): number {
+    return this.budgetService.net(this.budget);
   }
 
   removeExpense(id: string): void {

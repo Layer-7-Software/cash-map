@@ -52,51 +52,11 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('.title').textContent).toContain('Cash Map');
   });
 
-  describe('when getting monthly expenses', () => {
+  describe('when adding an expense', () => {
     let budget: Budget;
 
     function act() {
-      component.monthlyExpenses();
-    }
-
-    beforeEach(() => {
-      budget = new Budget();
-      createComponent();
-      component.budget = budget;
-    });
-
-    it('gets the expenses via the budget service', () => {
-      spyOn(budgetService, 'getExpenses').and.callFake(() => { return []; });
-      act();
-      expect(budgetService.getExpenses).toHaveBeenCalledWith(budget, ExpenseInterval.Monthly);
-    });
-  });
-
-  describe('when getting non-recurring expenses', () => {
-    let budget: Budget;
-
-    function act() {
-      component.nonRecurringExpenses();
-    }
-
-    beforeEach(() => {
-      budget = new Budget();
-      createComponent();
-      component.budget = budget;
-    });
-
-    it('gets the expenses via the budget service', () => {
-      spyOn(budgetService, 'getExpenses').and.callFake(() => { return []; });
-      act();
-      expect(budgetService.getExpenses).toHaveBeenCalledWith(budget, ExpenseInterval.OneTime);
-    });
-  });
-
-  describe('when adding a non-recurring expense', () => {
-    let budget: Budget;
-
-    function act() {
-      component.addNonRecurringExpense();
+      component.addExpense();
     }
 
     beforeEach(() => {
@@ -106,29 +66,9 @@ describe('AppComponent', () => {
     });
 
     it('adds the expense via the budget service', () => {
-      spyOn(budgetService, 'newExpense').and.callFake(() => { });
+      spyOn(budgetService, 'addExpense').and.callFake(() => { });
       act();
-      expect(budgetService.newExpense).toHaveBeenCalledWith(budget, ExpenseInterval.OneTime);
-    });
-  });
-
-  describe('when adding a monthly expense', () => {
-    let budget: Budget;
-
-    function act() {
-      component.addMonthlyExpense();
-    }
-
-    beforeEach(() => {
-      budget = new Budget();
-      createComponent();
-      component.budget = budget;
-    });
-
-    it('adds the expense via the budget service', () => {
-      spyOn(budgetService, 'newExpense').and.callFake(() => { });
-      act();
-      expect(budgetService.newExpense).toHaveBeenCalledWith(budget, ExpenseInterval.Monthly);
+      expect(budgetService.addExpense).toHaveBeenCalledWith(budget);
     });
   });
 
