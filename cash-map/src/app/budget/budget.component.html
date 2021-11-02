@@ -60,5 +60,11 @@
       <h3>Net (annually)</h3>
       <p>${{this.net() | number:'1.2-2'}}</p>
     </div>
+
+    <div class="section">
+      <div class="canvas-container">
+        <canvas baseChart [type]="'pie'" [data]="chart" [options]="options"></canvas>
+      </div>
+    </div>
   </div>
 </div>
