@@ -49,12 +49,4 @@ export class BudgetComponent implements OnInit {
     return this.budgetService.net(this.budget);
   }
 
-  removeExpense(id: string): void {
-    this.budgetService.removeExpense(this.budget, id);
-  }
-
-  net(): number {
-    return this.budgetService.net(this.budget);
-  }
-
 }
