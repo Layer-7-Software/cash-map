@@ -9,6 +9,7 @@ import { MaterialModule } from './material.module';
 import { ClearCacheDialogComponent } from './clear-cache-dialog/clear-cache-dialog.component';
 import { CacheControlsComponent } from './cache-controls/cache-controls.component';
 import { BudgetComponent } from './budget/budget.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { BudgetComponent } from './budget/budget.component';
     FormsModule,
     AppRoutingModule,
     MaterialModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

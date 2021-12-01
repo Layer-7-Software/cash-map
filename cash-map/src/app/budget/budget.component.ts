@@ -49,4 +49,47 @@ export class BudgetComponent implements OnInit {
     return this.budgetService.net(this.budget);
   }
 
+  get chart(): any {
+    let labels = this.budget.expenses.map(e => e.label);
+    labels.push('Taxes');
+    labels.push('Net');
+
+    let values = this.budget.expenses.map(e => e.value * (e.recurrence == ExpenseInterval.OneTime ? 1 : 12));
+    values.push(this.budgetService.taxesPerYear(this.budget));
+    values.push(this.budgetService.net(this.budget));
+
+    return {
+      labels: labels,
+      datasets: [{
+        label: 'Breakdown',
+        data: values,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+  }
+
+  get options(): any {
+    return {
+      responsive: true,
+      aspectRatio: 1,
+      animation: false
+    };
+  }
+
 }
