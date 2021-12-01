@@ -86,8 +86,9 @@ export class BudgetComponent implements OnInit {
 
   get options(): any {
     return {
-      "responsive": true,
-      "aspectRatio": 1
+      responsive: true,
+      aspectRatio: 1,
+      animation: false
     };
   }
 
